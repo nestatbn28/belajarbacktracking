@@ -22,12 +22,12 @@ cursor.execute(akun)
 akuns = cursor.fetchall()
 
 
-dosen="SELECT dms.no_dosen_id,dms.no_kelas_id,dms.no_matkul_id,matkul.sks,matkul.kategori_id FROM app_dosen_matkul_kelas dms INNER JOIN app_matkul matkul ON dms.no_matkul_id=matkul.id ORDER BY kategori_id ASC limit 40"
+dosen="SELECT dms.no_dosen_id,dms.no_kelas_id,dms.no_matkul_id,matkul.sks,matkul.kategori_id FROM app_dosen_matkul_kelas dms INNER JOIN app_matkul matkul ON dms.no_matkul_id=matkul.id ORDER BY kategori_id ASC limit 10"
 cursor.execute(dosen)
 dosens = cursor.fetchall()
 
 
-hari="select * from app_hari"
+hari="select * from app_hari limit 3"
 cursor.execute(hari)
 haris = cursor.fetchall()
 
@@ -43,7 +43,7 @@ kategori="select * from app_kategori"
 cursor.execute(kategori)
 kategoris = cursor.fetchall()
 
-sesi="select * from app_sesi"
+sesi="select * from app_sesi limit 3"
 cursor.execute(sesi)
 sesis = cursor.fetchall()
 
@@ -72,16 +72,23 @@ def generate_domain(grid: Grid) -> List[List[GridSchedule]]:
     for row in range(height):
         for col in range(width):
             domain.append([GridSchedule(row, col)])
-    # print(domain)
+    #print(domain)
     return domain
 
 
 class GenerateConstraint(Constraint[Tuple, List[GridSchedule]]):
     def __init__(self, dms: List[Tuple]) -> None:
         super().__init__(dms)
-        self.words: List[Tuple] = dms
+        self.dms: List[Tuple] = dms
 
     def satisfied(self, assignment: Dict[Tuple, List[GridSchedule]]) -> bool:
+        # percobaan = [(x,y) for x in dms for y in assignment.items()]
+        for dms1, grid in assignment.items():
+            print(assignment.items)
+            for dms2, grid in assignment.items():
+                if dms1[0] == dms2[0]:
+                    return False
+                
         # if there are any duplicates grid locations then there is an overlap
         # print(assignment)
         # all_locations = [locs for values in assignment.values() for locs in  values]
@@ -99,14 +106,21 @@ if __name__ == "__main__":
     
     grid: Grid=generate_grid(jumlah_hari, jumlah_sesi)
     dms : List[Tuple] =  [row for row in dosens]
+    dms.sort()
+    # print(dms)
     location: Dict[Tuple, List[List[GridSchedule]]] = {}
     for items in dms:
-        location[items]= generate_domain(grid)
+       location[items]= generate_domain(grid)
+       #print(location)
+    
+    #print(location)
     # for dms in dms:
     #         location[dms] = generate_domain(dms, grid)
+    
+    print(dms,location)
     csp: CSP[Tuple, List[GridSchedule]] = CSP(dms, location)
     csp.add_constraint(GenerateConstraint(dms))
-
+    solution: Optional[Dict[Tuple, List[GridSchedule]]] = csp.backtracking_search()
 
     # solution: Optional[Dict[Tuple, List[GridSchedule]]] = csp.backtracking_search()
     # if solution is None:

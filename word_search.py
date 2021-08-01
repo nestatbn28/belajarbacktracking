@@ -57,6 +57,7 @@ class WordSearchConstraint(Constraint[str, List[GridLocation]]):
 
     def satisfied(self, assignment: Dict[str, List[GridLocation]]) -> bool:
         all_locations = [locs for values in assignment.values() for locs in  values]
+        #print(len(set(all_locations)),len(all_locations))     
         return len(set(all_locations)) == len(all_locations)
 
     
@@ -68,6 +69,7 @@ if __name__ == "__main__":
     locations: Dict[str, List[List[GridLocation]]] = {}
     for word in words:
         locations[word] = generate_domain(word, grid)
+    print(words, locations)
     csp: CSP[str, List[GridLocation]] = CSP(words, locations)
     csp.add_constraint(WordSearchConstraint(words))
     solution: Optional[Dict[str, List[GridLocation]]] = csp.backtracking_search()
