@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{page_title}}
+{% endblock title %}
+
+
+{% block contents %}
+<div class="container shadow-lg p-3 mb-5 bg-white rounded" style="margin-top:50px">
+<h3 style="text-align:center ;">Data Sesi</h3>
+<a href="{% url 'App:create' %}" class="btn btn-primary" role="button" aria-disabled="true">Create</a>
+    <table class="table" style="margin-top:10px">
+        <thead style="text-align:center ;">
+            <tr>
+                <th style="width: 30%;">Sesi</th>
+                <th style="width: 30%;">Action</th>
+            </tr>
+        </thead>
+        <tbody style="text-align:center ;">
+                {% for sesi in semua_sesi %}
+              <tr>
+                  <td style="width: 30%;">{{sesi.nama}}</td>
+                  <td style="width: 15%;">
+                    <a href="{% url 'App:delete' sesi.id %}" class="btn btn-danger" role="button" aria-disabled="true">Delete</a>
+                    <a href="{% url 'App:update' sesi.id %}" class="btn btn-success" role="button" aria-disabled="true">Update</a>
+                </td>
+              </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock contents %}

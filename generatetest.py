@@ -26,6 +26,10 @@ pmk = "SELECT * from pmk limit 20"
 cursor.execute(pmk)
 pmks = cursor.fetchall()
 
+dosen = "select * from pmk limit 10"
+cursor.execute(dosen)
+dosens = cursor.fetchall()
+
 
 hari = "select * from app_hari"
 cursor.execute(hari)
@@ -89,6 +93,15 @@ class GenerateConstraint(Constraint[str, List[GridSchedule]]):
         # return len(set(all_locations)) == len(all_locations)
         return True
 
+    def satisfied(self, assignment: Dict[Tuple, List[GridSchedule]]) -> bool:
+        for dms1 in assignment.items():
+            for dms2 in assignment.items():
+                if dms1[1] == dms2[1]:
+                    return False
+                if dms1[2] == dms2[2]:
+                    return False
+            return True
+
 
 if __name__ == "__main__":
     jumlah_sesi = len(sesis)
@@ -97,6 +110,16 @@ if __name__ == "__main__":
     grid: Grid = generate_grid(jumlah_hari, jumlah_sesi)
     pmk: List[Tuple] = [row for row in pmks]
     location: Dict[Tuple, List[List[GridSchedule]]] = {}
+
+    grid: Grid = generate_grid(jumlah_hari, jumlah_sesi)
+    dms: List[Tuple] = [row for row in dosens]
+
+    location: Dict[Tuple, List[List[GridSchedule]]] = {}
+    for items in dms:
+        location[items] = generate_domain(items, grid)
+
+    csp: CSP[Tuple, List[GridSchedule]] = CSP(dms, location)
+    csp.add_constraint(GenerateConstraint(dms))
 
     for items in pmk:
         location[items] = generate_domain(grid)
@@ -114,3 +137,14 @@ if __name__ == "__main__":
     #             (row, col) = (grid_locations[index].row, grid_locations[index].column)
     #             grid[row][col] = letter
     #     display_grid(grid)
+    solution: Optional[Dict[Tuple, List[GridSchedule]]
+                       ] = csp.backtracking_search()
+    if solution is None:
+        print("No solution found!")
+    else:
+        for word, grid_locations in solution.items():
+            for index, letter in enumerate(word):
+                (row, col) = (
+                    grid_locations[index].row, grid_locations[index].column)
+                grid[row][col] = letter
+        display_grid(grid)

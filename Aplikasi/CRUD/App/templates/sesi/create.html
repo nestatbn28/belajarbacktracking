@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{page_title}}
+{% endblock title %}
+
+
+{% block contents %}
+    <div class="container shadow-lg p-3 mb-5 bg-white rounded" style="margin-top:50px">
+        <h3 style="text-align:center ;">Data Sesi</h3>
+        <form method="POST">
+        {% csrf_token %}
+    
+        <div class="form-group">
+            {{sesi_form.nama.label}}
+            {{sesi_form.nama}}
+        </div>
+        <div class="d-grid gap-2 d-md-block">
+            <button type="submit" class="btn btn-primary btn-block">Kirim</button>
+         </div>
+
+    </form>
+</div>
+{% endblock contents %}

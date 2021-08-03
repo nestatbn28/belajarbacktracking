@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{page_title}}
+{% endblock title %}
+
+
+{% block contents %}
+<div class="container shadow-lg p-3 mb-5 bg-white rounded" style="margin-top:50px">
+<h3 style="text-align:center ;">Data Mata Kuliah</h3>
+<a href="{% url 'App:creatematakuliah' %}" class="btn btn-primary" role="button" aria-disabled="true">Create</a>
+    <table class="table" style="margin-top:10px">
+        <thead style="text-align:center ;">
+            <tr>
+                <th style="width: 10%;">Mata Kuliah</th>
+                <th style="width: 10%;">SKS</th>
+                <th style="width: 10%;">Action</th>
+            </tr>
+        </thead>
+        <tbody style="text-align:center ;">
+            {% for matkul in semua_matkul %}
+              <tr>
+                <td style="width: 10%;">{{matkul.kode}}</td>
+                <td style="width: 10%;">{{matkul.nama}}</td>
+                <td style="width: 10%;">{{matkul.sks}}</td>
+                <td style="width: 10%;">{{matkul.kategori}}</td>
+                <td style="width: 10%;">
+                  <a href="{% url 'App:deletematakuliah' matkul.id %}"class="btn btn-danger" role="button" aria-disabled="true">Delete</a>
+                  <a href="{% url 'App:updatematakuliah' matkul.id %}"class="btn btn-success" role="button" aria-disabled="true">Update</a>
+                </td>
+              </tr>
+            {% endfor %}
+        </ol>
+        </tbody>
+    </table>
+</div>
+{% endblock contents %}
+
